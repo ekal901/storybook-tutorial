@@ -105,6 +105,7 @@ npm run storybook
 ```
 스토리북 빌드 후, 실행을 시켜야 에러가 나지 않는다. 문서에서는 이것에 대해 설명해 두지 않아 조금 헤맸다.
 ### 4. 상태(State)에 따른 컴포넌트 반영
+태스크 완료라면, 체크박스를 disable 처리 및 list-item.TASK_ARCHIVED input이 disable 처리되어 보임
 ```javascript
 // src/components/Task.js
 import React from 'react';
