@@ -1,7 +1,6 @@
 <h1>스토리북 튜토리얼 따라해보기</h1>
 예전에 네이버에서 세미나 같은 것을 할 때, 스토리북에 대한 내용을 접하긴 했는데 직접적으로 사용해 본 적이 없다보니까 이렇게 스스로 튜토리얼을 따라하면서 접해보기로 한다.<br>
-영어로 되어있고 내가 한 것은 그저 따라하기 뿐이다.<br>
-그래도 내가 공부한 것들을 정리하면서 진행해 볼까 한다.<br>
+영어로 되어있고 내가 한 것은 그저 따라하기 뿐이다. 그래도 내가 공부한 것들을 정리하면서 진행해 볼까 한다.<br>
 
 ### 1. 프로젝트 만들기
 ```shell
@@ -66,6 +65,8 @@ Archived.args = {
 }
 ```
 Task.js와 Task.stories.js 파일을 만들어 준다.<br>
+잘 보면, bind를 사용하여, 각 상태별 컴포넌트를 만들어주는것을 볼 수 있다.
+신기한건, Default.args.task의 state를 덮어쓰는걸까? 하는 의문이 든다.
 
 ### 3. Config 파일 수정하기
 ```javascript
@@ -98,11 +99,11 @@ export const parameters = {
 ```
 
 ### 중요! 
-그리고나서 스토리북 빌드 후, 실행시키면 된다.
 ```shell 
 npm run build-storybook
 npm run storybook
 ```
+스토리북 빌드 후, 실행을 시켜야 에러가 나지 않는다. 문서에서는 이것에 대해 설명해 두지 않아 조금 헤맸다.
 ### 4. 상태(State)에 따른 컴포넌트 반영
 ```javascript
 // src/components/Task.js
@@ -140,6 +141,7 @@ export default function Task({ task : { id, title, state}, onArchiveTask, onPinT
 ```
 
 ### 5. 필수 데이터값 정하기 (PropTypes 사용)
+PropType 대신에 Typescript를 사용하는 것도 괜찮을 것 같다.
 ```javascript
 // src/components/Task.js
 Task.propTypes = {
@@ -164,3 +166,4 @@ import initStoryshots from '@storybook/addon-storyshots';
 initStoryshots();
 ```
 ### 8. Composit component
+진행중
