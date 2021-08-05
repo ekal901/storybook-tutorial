@@ -66,7 +66,7 @@ Archived.args = {
 ```
 Task.js와 Task.stories.js 파일을 만들어 준다.<br>
 잘 보면, bind를 사용하여, 각 상태별 컴포넌트를 만들어주는것을 볼 수 있다.
-신기한건, Default.args.task의 state를 덮어쓰는걸까? 하는 의문이 든다.
+Default.args.task의 state를 덮어쓴다. (나중에 선언됨)
 
 ### 3. Config 파일 수정하기
 ```javascript
