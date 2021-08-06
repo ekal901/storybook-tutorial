@@ -166,5 +166,171 @@ npm install -D react-test-renderer
 import initStoryshots from '@storybook/addon-storyshots';
 initStoryshots();
 ```
-### 8. Composit component
-진행중
+## Composit component
+이번엔 좀 더 복잡한 리스트를 만든다고 한다.<br> Pinned 될 때는 Default 보다 위에 있는 리스트 하나, 그리고 Default 들만 있는 리스트 하나<br>
+<img alt="composit" src="https://storybook.js.org/tutorials/intro-to-storybook/tasklist-states-1.png" width="100%">
+그리고 로딩 안될 때 화면 하나, 그리고 Task가 없을때 화면도 추가한다고 한다.<br>
+### 1. Get Setup
+```javascript
+// src/components/TaskList.js 
+import React from 'react';
+
+import Task from './Task';
+
+export default function TaskList({ loading, tasks, onPinTask, onArchiveTask}) {
+    const events = {
+        onPinTask,
+        onArchiveTask
+    };
+
+    if(loading) {
+        return <div className="list-items">loading</div>;
+    }
+
+    if(tasks.length === 0) {
+        return <div className="list-items">empty</div>
+    }
+
+    return (
+        <div className="list-items">
+            // map을 사용해서 Task 리스트 뿌려주기, Task에서는 개별 값을 가지고 div 그린다.
+            {tasks.map(task => (
+                <Task key={task.id} task={task} {...events}></Task>
+            ))}
+        </div>
+    )
+}
+```
+### 2. TaskList의 stories 파일 만들기
+```javascript
+// src/components/TaskList.stories.js
+import React from 'react';
+
+import TaskList from './TaskList';
+import * as TaskStories from './Task.stories';
+
+export default {
+    component: TaskList,
+    title: 'TaskList',
+    decorators: [story => <div style={{padding: '3rem'}}>{story()}</div>]
+};
+
+const Template = args => <TaskList {...args} />
+
+export const Default = Template.bind({});
+Default.args = {
+    tasks: [
+        {...TaskStories.Default.args.tasks, id: '1', title: 'Task 1'},
+        {...TaskStories.Default.args.tasks, id: '2', title: 'Task 2'},
+        {...TaskStories.Default.args.tasks, id: '3', title: 'Task 3'},
+        {...TaskStories.Default.args.tasks, id: '4', title: 'Task 4'},
+        {...TaskStories.Default.args.tasks, id: '5', title: 'Task 5'},
+        {...TaskStories.Default.args.tasks, id: '6', title: 'Task 6'}
+    ]
+};
+
+export const WithPinnedTask = Template.bind({});
+WithPinnedTask.args = {
+    tasks: [
+        ...Default.args.tasks.slice(0,5), // 객체 5개 slice
+        {id: '6', title: 'Task 6 (pinned)', state: 'TASK_PINNED'}
+    ]
+}
+
+export const Loading = Template.bind({});
+Loading.args = {
+    tasks: [],
+    loading: true
+};
+
+export const Empty = Template.bind({});
+Empty.args = {
+    tasks: [],
+    loading: false
+}
+```
+
+### 3. States 에 따른 UI를 TaskList.js에 반영
+기존의 단순한 UI 구조를 TaskList.js 파일을 수정해서 좀 더 디테일하게 다듬었다.
+TaskList.js에 아래 코드를 추가한다.
+```javascript
+// src/components/TaskList.js
+import React from 'react';
+
+import Task from './Task';
+
+export default function TaskList({ loading, tasks, onPinTask, onArchiveTask}) {
+    const events = {
+        onPinTask,
+        onArchiveTask
+    };
+
+    const LoadingRow = (
+        <div className="loading-item">
+            <span className="glow-checkbox" />
+            <span className="glow-text">
+                <span>Loading</span> <span>cool</span> <span>cool</span>
+            </span>
+        </div>
+    )
+
+    if(loading) {
+        return <div className="list-items">
+            {LoadingRow}
+            {LoadingRow}
+            {LoadingRow}
+            {LoadingRow}
+            {LoadingRow}
+            {LoadingRow}
+        </div>;
+    }
+
+    if(tasks.length === 0) {
+        return (
+            <div className="list-items">
+                <div className="wrapper-message">
+                    <span className="icon-check" />
+                    <div className="title-message">You have no tasks</div>
+                    <div className="subtitle-message">Sit back and relax</div>
+                </div>
+            </div>
+        )
+    }
+
+    const taskInOrder = [
+        ...tasks.filter(t => t.state === 'TASK_PINNED'), // 필터를 사용해서 PINNED 된 것들은 상단에 위치
+        ...tasks.filter(t => t.state !== 'TASK_PINNED'), // 나머지는 하단에 위치
+    ]
+
+    return (
+        <div className="list-items">
+            {taskInOrder.map(task => (
+                <Task key={task.id} task={task} {...events}></Task>
+            ))}
+        </div>
+    )
+}
+```
+https://storybook.js.org/tutorials/intro-to-storybook/finished-tasklist-states-6-0.mp4<br>
+동작 이미지는 위에 링크에서 확인 가능하다.
+
+### 4. propTypes 추가
+TaskList.js 파일의 하단에 propTypes에 대한 정의를 추가
+```javascript
+import PropTypes from 'prop-types'; // 상단에 추가!
+
+TaskList.propTypes = {
+    loading: PropTypes.bool,
+    tasks: PropTypes.arrayOf(Task.propTypes.task).isRequired,
+    onPinTask: PropTypes.func,
+    onArchiveTask: PropTypes.func
+};
+
+TaskList.defaultProp = {
+    loading: false
+};
+```
+### 5. 자동화 테스트 
+React Testing Library와 @storybook/testing-react를 사용<br>
+```shell
+```
